@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AzureTranslator {
 	
 	//clé d'accès au service
-	private static final String key="d8839b4557ca44cc9d895d7b47d86bb3";
+	private static final String key="65141b97c7dc4b19a68c9153e505b47e";
 	
 	private String endpoint = "https://api.cognitive.microsofttranslator.com";
 	private String url = endpoint + "/translate?api-version=3.0&to=";
@@ -48,6 +48,7 @@ public class AzureTranslator {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httpPost = new HttpPost(realUrl);
 		httpPost.addHeader("Ocp-Apim-Subscription-Key", key);
+		httpPost.addHeader("Ocp-Apim-Subscription-Region", "westeurope");
 		httpPost.addHeader("Content-type", "application/json");
 		
 		text = text.replace("\"", "\\\""); //échappement des guillemets
