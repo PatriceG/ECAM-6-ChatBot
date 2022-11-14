@@ -1,6 +1,6 @@
-	package fr.edb.bot;
+package fr.ecam_rennes.bot;
 
-	import java.io.IOException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 

@@ -1,4 +1,4 @@
-package fr.edb.bot;
+package fr.ecam_rennes.bot;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -13,7 +13,8 @@ import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 
-import fr.edb.geocodeur.GeoCodeur;
+
+import fr.ecam_rennes.geocodeur.GeoCodeur;
 
 /**
  * Classe principale du Bot
@@ -40,17 +41,12 @@ public class Bot implements PacketListener {
 	protected XMPPConnection conn;
 	
 
-	/**
-	 * Composant appelant le service de AzureTranslator
-	 */
-	protected AzureTranslator translator;
-
+	
 	/**
 	 * Constructeur
 	 */
 	public Bot() {
-		//Initialisation du composant de traduction, pour plus tard.
-		translator = new AzureTranslator();
+		
 	}
 
 	public void init() throws IOException {		
@@ -103,7 +99,7 @@ public class Bot implements PacketListener {
 				String[] el = msg.getBody().split(" ");
 				String aTraduire = msg.getBody().substring(msg.getBody().indexOf(el[1]) + el[1].length() + 1);
 				String langue = el[1];
-				translate(msg.getFrom(), langue, aTraduire);
+				//TODO remove
 			} else {
 				// TODO compléter la lecture du body du message pour traiter les différentes commandes
 				// aiguiller vers les différentes méthodes (à définir & implémenter) qui implémentent le comportement du Bot
@@ -117,29 +113,6 @@ public class Bot implements PacketListener {
 	
 	
 
-	/**
-	 * Appelle le service de traduction Microsoft Translator
-	 * 
-	 * @param user
-	 *            - id de l'utilisateur
-	 * @param langue
-	 *            - langue destination
-	 * @param aTraduire
-	 *            - message à traduire
-	 */
-	public void translate(String user, String langue, String aTraduire) {
-
-		String traduction = null;
-
-		try {
-			traduction = translator.translate(langue, aTraduire);
-			sendMessage(traduction, user);
-		} catch (Exception e) {
-			e.printStackTrace();
-			sendMessage("Erreur lors de l'appel du service de traduction", user);
-		}
-
-	}
 
 	/**
 	 * Envoie un message d'aide

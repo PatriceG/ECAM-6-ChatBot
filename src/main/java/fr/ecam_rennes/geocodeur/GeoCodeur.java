@@ -1,28 +1,23 @@
-package fr.edb.geocodeur;
+package fr.ecam_rennes.geocodeur;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.net.URI;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 /**
- * Classe illustrant l'utilisation du HttpClient pour faire appel à un service
- * de G�ocodage d'adresses
+ * Classe illustrant l'utilisation du client HTTP de Java11 pour faire appel à un service
+ * de Géocodage d'adresses
  * 
  * @author pat
  * 
  */
 public class GeoCodeur {
-	private final static boolean USE_PROXY = false;
-
 	/**
 	 * Appel du service de GeoCodage d'OpenStreetMap
 	 * 
@@ -33,39 +28,32 @@ public class GeoCodeur {
 	public String geoCode(String adresse) throws Exception {
 		String res = null;
 
-		DefaultHttpClient httpclient = new DefaultHttpClient();
+		HttpClient httpClient = HttpClient.newBuilder()
+         .version(HttpClient.Version.HTTP_2)
+         .connectTimeout(Duration.ofSeconds(10))
+         .build(); 
+
 		try {
-			if (USE_PROXY) {
-				HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");
-				httpclient.getParams().setParameter(
-						ConnRoutePNames.DEFAULT_PROXY, proxy);
-			}
-			// URL du service à appeler avec paramètres associés
-			HttpGet req = new HttpGet(
-					"http://nominatim.openstreetmap.org/search?q="
+            HttpRequest request = HttpRequest.newBuilder()
+            .GET()
+            .uri(URI.create("http://nominatim.openstreetmap.org/search?q="
 							+ URLEncoder.encode(adresse, "UTF-8")
-					+"&format=json&polygon=1&addressdetails=1");
+					+"&format=json&polygon=1&addressdetails=1"))
+            .build();                              
+            HttpResponse<String> response = httpClient.send(request,
+            HttpResponse.BodyHandlers.ofString()); 
 
-			System.out.println("Envoi requete vers: " + req.getURI());
-			// Exécution requ�te
-			HttpResponse rsp = httpclient.execute(req);
-			// Lecture r�ponse
-			HttpEntity entity = rsp.getEntity();
+         	System.out.println("Status code: " + response.statusCode());                            
+         	System.out.println("Headers: " + response.headers().allValues("content-type"));
+         	System.out.println("Body: " + response.body());
+			res = response.body();
+		} catch (IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+		 finally {
 
-			System.out.println("----------------------------------------");
-			System.out.println(rsp.getStatusLine());
-
-			if (entity != null) {
-				res = EntityUtils.toString(entity);
-			}
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
-			httpclient.getConnectionManager().shutdown();
 		}
 		return res;
-
 	}
 
 	/**
@@ -73,7 +61,7 @@ public class GeoCodeur {
 	 * d'OpenSteetMap et calculer une URL pour GoogleMaps centree sur cette
 	 * adresse
 	 * @param s
-	 *            - flux XML retourn� par Yahoo
+	 *            - flux XML retourné
 	 * @return URL Google Maps
 	 */
 	public String calcGoogleMapsURL(String s) {
@@ -113,7 +101,7 @@ public class GeoCodeur {
 			}
 			String url = gc.calcGoogleMapsURL(res);
 			System.out.println("URL Google Maps: " + url);
-			//lancement du navigateur
+			//lancement du navigateur selon l'OS
 			String navigateur = "/usr/bin/firefox ";
 			if(System.getProperty("os.name").startsWith("Windows")){
 				navigateur = "C:\\Program Files\\Internet Explorer\\iexplore.exe ";
