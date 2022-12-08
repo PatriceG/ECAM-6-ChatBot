@@ -149,11 +149,13 @@ public class Bot implements PacketListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		XMPPConnection.DEBUG_ENABLED = true;
+		//XMPPConnection.DEBUG_ENABLED = true;
 		Bot bot = new Bot();
 
 		try {
 			bot.init();
+			System.out.println("En attente de clients");
+			Thread.currentThread().join();			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
