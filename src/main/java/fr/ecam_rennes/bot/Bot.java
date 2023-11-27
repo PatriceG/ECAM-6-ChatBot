@@ -99,7 +99,8 @@ public class Bot implements PacketListener {
 				String[] el = msg.getBody().split(" ");
 				String aTraduire = msg.getBody().substring(msg.getBody().indexOf(el[1]) + el[1].length() + 1);
 				String langue = el[1];
-				//TODO remove
+				//TODO appeler la méthode de traduction
+				
 			} else {
 				// TODO compléter la lecture du body du message pour traiter les différentes commandes
 				// aiguiller vers les différentes méthodes (à définir & implémenter) qui implémentent le comportement du Bot
