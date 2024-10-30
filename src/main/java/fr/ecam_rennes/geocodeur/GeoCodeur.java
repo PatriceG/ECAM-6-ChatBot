@@ -36,7 +36,7 @@ public class GeoCodeur {
 		try {
             HttpRequest request = HttpRequest.newBuilder()
             .GET()
-            .uri(URI.create("http://nominatim.openstreetmap.org/search?q="
+            .uri(URI.create("https://nominatim.openstreetmap.org/search?q="
 							+ URLEncoder.encode(adresse, "UTF-8")
 					+"&format=json&polygon=1&addressdetails=1"))
             .build();                              
